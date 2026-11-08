@@ -12,7 +12,7 @@ export const contact = {
 
 export const site = {
   name: 'Northline Atelier',
-  url: 'https://northline-demo.kreadium.cl',
+  url: 'https://www.kreadium.cl/sitios/arquitectura',
   title: 'Northline Atelier | Arquitectura e interiores (demo de Kreadium)',
   description:
     'Northline Atelier es un estudio ficticio de arquitectura e interiores: un sitio web de demostración creado por Kreadium. Espacios atemporales que equilibran belleza, propósito y lugar.',

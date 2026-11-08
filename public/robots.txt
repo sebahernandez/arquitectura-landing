@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://northline-demo.kreadium.cl/sitemap-index.xml
+Sitemap: https://www.kreadium.cl/sitios/arquitectura/sitemap-index.xml
