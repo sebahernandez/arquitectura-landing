@@ -1,0 +1,32 @@
+---
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 392 430" fill="none" stroke="currentColor" stroke-width="1" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <!-- walls -->
+  <path d="M0 40h60v70H0M60 40V0M60 110h70v30M0 140h130M130 0v40M0 260h96v90H0M96 260v-40h34M96 350h34v80M130 140v80h-34" />
+  <path d="M182 0v120h60v50h150M182 120V70h30M242 170v140h70v120M242 310H182v120M312 310h80" />
+  <path d="M0 40v100M0 260v90" stroke-width="2.2" />
+  <!-- door swings -->
+  <path d="M60 110a28 28 0 0 1 28 28M96 300a24 24 0 0 0 24-24M242 220a30 30 0 0 1 30-30M182 350a24 24 0 0 1 24-24" stroke-width=".8" />
+  <!-- stairs -->
+  <g stroke-width=".8">
+    <path d="M300 320h70M300 332h70M300 344h70M300 356h70M300 368h70M300 380h70M300 392h70M300 404h70" />
+    <path d="M300 320v96h70V320" />
+  </g>
+  <!-- bed -->
+  <rect x="10" y="272" width="64" height="62" stroke-width=".8" />
+  <rect x="14" y="276" width="26" height="14" stroke-width=".7" /><rect x="44" y="276" width="26" height="14" stroke-width=".7" />
+  <!-- planting -->
+  <g stroke-width=".7">
+    <circle cx="310" cy="70" r="24" /><circle cx="310" cy="70" r="14" /><circle cx="350" cy="116" r="18" /><circle cx="350" cy="116" r="9" />
+    <circle cx="272" cy="130" r="14" /><circle cx="360" cy="40" r="16" />
+    <path d="M300 70h20M310 60v20M342 116h16M350 108v16" />
+  </g>
+  <g font-family="Jost, sans-serif" font-size="7.5" letter-spacing="1.4" fill="currentColor" stroke="none">
+    <text x="8" y="95">WALK-IN</text><text x="8" y="105">CLOSET</text>
+    <text x="22" y="312">BEDROOM 2</text>
+    <text x="196" y="260">BEDROOM 3</text>
+    <text x="344" y="262">BATH</text>
+  </g>
+</svg>

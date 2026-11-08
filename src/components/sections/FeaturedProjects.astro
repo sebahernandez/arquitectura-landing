@@ -1,0 +1,75 @@
+---
+import { projects } from '../../data/projects';
+import SectionLabel from '../ui/SectionLabel.astro';
+import ThinArrow from '../ui/ThinArrow.astro';
+import ProjectCard from '../ui/ProjectCard.astro';
+import ProjectModal from './ProjectModal.astro';
+const featured = projects.filter((p) => p.featured);
+const more = projects.filter((p) => !p.featured);
+---
+<section id="projects" class="projects" aria-labelledby="projects-label">
+  <div class="projects__head">
+    <SectionLabel id="projects-label" rule="none" strong as="h2">Proyectos destacados</SectionLabel>
+    <button type="button" class="arrow-link" id="projects-toggle" aria-expanded="false" aria-controls="projects-more">
+      <span id="projects-toggle-text">Ver todos los proyectos</span><ThinArrow />
+    </button>
+  </div>
+  <div class="projects__grid" id="projects-grid">
+    {featured.map((p, i) => <ProjectCard project={p} reveal delay={i * 0.08} />)}
+  </div>
+  <div class="projects__grid projects__grid--more" id="projects-more" hidden>
+    {more.map((p) => <ProjectCard project={p} />)}
+  </div>
+  {projects.map((p) => <ProjectModal project={p} />)}
+</section>
+
+<script>
+  const toggle = document.getElementById('projects-toggle');
+  const more = document.getElementById('projects-more');
+  const text = document.getElementById('projects-toggle-text');
+  toggle?.addEventListener('click', () => {
+    if (!more || !text) return;
+    const open = more.hasAttribute('hidden');
+    more.toggleAttribute('hidden', !open);
+    toggle.setAttribute('aria-expanded', String(open));
+    text.textContent = open ? 'Ver menos proyectos' : 'Ver todos los proyectos';
+  });
+
+  const lock = (on: boolean) => document.body.classList.toggle('scroll-locked', on);
+  document.querySelectorAll<HTMLButtonElement>('[data-project]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const dlg = document.getElementById(`modal-${btn.dataset.project}`) as HTMLDialogElement | null;
+      if (!dlg) return;
+      dlg.showModal();
+      lock(true);
+      dlg.dataset.opener = btn.dataset.project;
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('dialog.modal').forEach((dlg) => {
+    const slides = Array.from(dlg.querySelectorAll<HTMLElement>('.modal__slide'));
+    const count = dlg.querySelector<HTMLElement>('.modal__count');
+    let idx = 0;
+    const show = (n: number) => {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+      if (count) count.textContent = `${idx + 1} / ${slides.length}`;
+    };
+    show(0);
+    dlg.querySelector('[data-prev]')?.addEventListener('click', () => show(idx - 1));
+    dlg.querySelector('[data-next]')?.addEventListener('click', () => show(idx + 1));
+    dlg.querySelector('[data-close]')?.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); dlg.close(); }
+      if (e.key === 'ArrowLeft') show(idx - 1);
+      if (e.key === 'ArrowRight') show(idx + 1);
+    });
+    dlg.addEventListener('close', () => {
+      lock(false);
+      show(0);
+      const opener = document.querySelector<HTMLElement>(`[data-project="${dlg.dataset.opener}"]`);
+      opener?.focus();
+    });
+  });
+</script>

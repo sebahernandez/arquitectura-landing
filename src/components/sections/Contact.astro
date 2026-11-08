@@ -1,0 +1,117 @@
+---
+import { ChevronDown, MapPin, Mail, Phone } from '@lucide/astro';
+import { contact } from '../../data/contact';
+import LogoMark from '../ui/LogoMark.astro';
+import Button from '../ui/Button.astro';
+---
+<section id="contact" class="contact" aria-labelledby="contact-title">
+  <div class="contact__col contact__intro">
+    <h2 id="contact-title" class="h-section contact__title">Construyamos<br />algo<br />excepcional.</h2>
+    <span class="contact__rule" aria-hidden="true"></span>
+    <p class="contact__small">Cuéntenos sobre su proyecto y nuestro equipo se pondrá en contacto.</p>
+  </div>
+
+  <div class="contact__col contact__form-col">
+    <form id="contact-form" novalidate aria-describedby="form-demo-note">
+      <div class="field">
+        <label for="f-name">Nombre</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" />
+        <p class="field__err" id="e-name" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="f-email">Correo electrónico</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email" />
+        <p class="field__err" id="e-email" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="f-phone">Teléfono <span style="text-transform:none;letter-spacing:0;color:var(--color-muted)">(opcional)</span></label>
+        <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby="e-phone" />
+        <p class="field__err" id="e-phone" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="f-type">Tipo de proyecto</label>
+        <select id="f-type" name="type" required aria-describedby="e-type">
+          <option value="" selected></option>
+          {contact.projectTypes.map((t) => <option value={t}>{t}</option>)}
+        </select>
+        <ChevronDown class="field__chev" size={14} stroke-width={1.3} aria-hidden="true" />
+        <p class="field__err" id="e-type" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="f-msg">Cuéntenos sobre su proyecto</label>
+        <textarea id="f-msg" name="message" rows="3" required minlength="20" aria-describedby="e-msg"></textarea>
+        <p class="field__err" id="e-msg" aria-live="polite"></p>
+      </div>
+      <Button type="submit" arrow class="contact__submit" style="min-width:217px">Enviar consulta</Button>
+      <p class="demo-note" id="form-demo-note" style="margin-top:14px">Formulario de demostración: no se envía ni se almacena nada.</p>
+      <div class="form-status" id="form-status" role="status" aria-live="polite" tabindex="-1" hidden></div>
+    </form>
+  </div>
+
+  <div class="contact__col contact__info">
+    <LogoMark class="info__mark" />
+    <p class="info__brand">NORTHLINE</p>
+    <p class="info__sub">Atelier</p>
+    <span class="info__rule" aria-hidden="true"></span>
+    <p class="info__row"><MapPin size={14} stroke-width={1.3} aria-hidden="true" /><span>{contact.address[0]}<br />{contact.address[1]}</span></p>
+    <p class="info__row"><Mail size={14} stroke-width={1.3} aria-hidden="true" /><a href={`mailto:${contact.email}`}>{contact.email}</a></p>
+    <p class="info__row"><Phone size={14} stroke-width={1.3} aria-hidden="true" /><span>{contact.phone}</span></p>
+    <ul class="socials" style="list-style:none;padding:0;margin-top:26px">
+      {contact.socials.map((s, i) => (
+        <>
+          {i > 0 && <li aria-hidden="true"><i></i></li>}
+          <li><a href={s.href} aria-label={`${s.label} (enlace de demostración, sin perfil real)`}>{s.label}</a></li>
+        </>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status') as HTMLElement | null;
+  if (form && status) {
+    const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value.trim();
+    const setErr = (field: string, msg: string) => {
+      const input = document.getElementById(`f-${field}`) as HTMLElement;
+      const err = document.getElementById(`e-${field}`) as HTMLElement;
+      err.textContent = msg;
+      if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+      return !msg;
+    };
+    const validators: Record<string, () => string> = {
+      name: () => (val('f-name').length < 2 ? 'Por favor, ingrese su nombre.' : ''),
+      email: () => (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val('f-email')) ? 'Por favor, ingrese un correo electrónico válido.' : ''),
+      phone: () => { const v = val('f-phone'); return v && !/^\+?[0-9\s().-]{7,20}$/.test(v) ? 'Use dígitos, espacios, + o guiones (de 7 a 20 caracteres).' : ''; },
+      type: () => (!val('f-type') ? 'Por favor, elija un tipo de proyecto.' : ''),
+      msg: () => (val('f-msg').length < 20 ? 'Por favor, cuéntenos un poco más (mínimo 20 caracteres).' : ''),
+    };
+    Object.keys(validators).forEach((k) => {
+      document.getElementById(`f-${k}`)?.addEventListener('blur', () => setErr(k, validators[k]()));
+      document.getElementById(`f-${k}`)?.addEventListener('input', () => {
+        if (document.getElementById(`f-${k}`)?.getAttribute('aria-invalid')) setErr(k, validators[k]());
+      });
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      status.hidden = true;
+      status.classList.remove('form-status--error');
+      let firstBad: string | null = null;
+      for (const k of Object.keys(validators)) {
+        const ok = setErr(k, validators[k]());
+        if (!ok && !firstBad) firstBad = k;
+      }
+      if (firstBad) {
+        status.hidden = false;
+        status.classList.add('form-status--error');
+        status.textContent = 'Por favor, corrija los campos destacados.';
+        document.getElementById(`f-${firstBad}`)?.focus();
+        return;
+      }
+      status.hidden = false;
+      status.textContent = 'Gracias. Este es un formulario de DEMOSTRACIÓN: su mensaje no fue enviado y no se ha almacenado nada.';
+      form.reset();
+      status.focus();
+    });
+  }
+</script>

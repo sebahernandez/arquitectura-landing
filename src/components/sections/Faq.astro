@@ -1,0 +1,40 @@
+---
+import { Plus } from '@lucide/astro';
+import { faq } from '../../data/faq';
+import SectionLabel from '../ui/SectionLabel.astro';
+---
+<section id="faq" class="block block--sand" aria-labelledby="faq-title">
+  <div class="block-inner">
+    <div class="block__head">
+      <SectionLabel rule="after">Preguntas</SectionLabel>
+      <h2 id="faq-title" class="h-section">Preguntas frecuentes.</h2>
+    </div>
+    <div class="faq">
+      {faq.map((f, i) => (
+        <div class="faq__item">
+          <h3>
+            <button type="button" class="faq__btn" id={`faq-btn-${i}`} aria-expanded="false" aria-controls={`faq-panel-${i}`}>
+              <span>{f.q}</span><Plus size={20} stroke-width={1.3} aria-hidden="true" />
+            </button>
+          </h3>
+          <div class="faq__panel" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-btn-${i}`} data-open="false" inert>
+            <div><p>{f.a}</p></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.faq__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.getAttribute('aria-controls') ?? '') as HTMLElement | null;
+      if (!panel) return;
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      panel.dataset.open = String(open);
+      panel.inert = !open;
+    });
+  });
+</script>

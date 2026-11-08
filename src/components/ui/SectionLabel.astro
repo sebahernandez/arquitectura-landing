@@ -1,0 +1,9 @@
+---
+interface Props { rule?: 'none' | 'before' | 'after'; strong?: boolean; as?: 'p' | 'h2' | 'h3' | 'div'; id?: string; class?: string }
+const { rule = 'after', strong = false, as: Tag = 'p', id, class: cls } = Astro.props;
+---
+<Tag id={id} class:list={['section-label', cls]}>
+  {rule === 'before' && <span class="section-label__rule" aria-hidden="true" />}
+  <span class:list={['label', strong && 'label--strong']}><slot /></span>
+  {rule === 'after' && <span class="section-label__rule" aria-hidden="true" />}
+</Tag>

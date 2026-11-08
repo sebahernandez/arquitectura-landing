@@ -1,0 +1,69 @@
+---
+import { Search, Menu, X } from '@lucide/astro';
+import { navItems, brand } from '../../data/nav';
+import Logo from '../ui/Logo.astro';
+import SearchDialog from './SearchDialog.astro';
+---
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="#top" aria-label="Northline Atelier, volver al inicio"><Logo /></a>
+    <nav class="nav-main" aria-label="Principal">
+      {navItems.map((n) => <a href={n.href}>{n.label}</a>)}
+    </nav>
+    <div class="header-tools">
+      <div class="lang" role="group" aria-label="Idioma (demostración, no funcional)">
+        <button type="button" aria-pressed="true" title="Español" lang="es">ES</button>
+        <span class="lang__sep" aria-hidden="true"></span>
+        <button type="button" aria-pressed="false" title="Solo demostración: la traducción no está habilitada" lang="en">EN</button>
+      </div>
+      <span class="header-divider hide-md" aria-hidden="true"></span>
+      <button type="button" class="icon-btn" data-open-search aria-label="Abrir búsqueda" aria-haspopup="dialog"><Search size={22} stroke-width={1.3} /></button>
+      <button type="button" class="icon-btn" id="menu-open" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-panel"><Menu size={24} stroke-width={1.3} /></button>
+    </div>
+  </div>
+</header>
+
+<dialog class="menu-panel" id="menu-panel" aria-label="Menú del sitio">
+  <div class="menu-panel__top">
+    <Logo />
+    <button type="button" class="icon-btn" id="menu-close" aria-label="Cerrar menú"><X size={26} stroke-width={1.3} /></button>
+  </div>
+  <nav aria-label="Móvil">
+    {navItems.map((n) => <a href={n.href}>{n.label}</a>)}
+  </nav>
+  <p class="menu-panel__foot">{brand.name} {brand.sub} es un estudio ficticio. Sitio web de demostración de Kreadium.</p>
+</dialog>
+
+<SearchDialog />
+
+<script>
+  const openBtn = document.getElementById('menu-open') as HTMLButtonElement | null;
+  const closeBtn = document.getElementById('menu-close');
+  const panel = document.getElementById('menu-panel') as HTMLDialogElement | null;
+  if (openBtn && closeBtn && panel) {
+    const lock = (on: boolean) => document.body.classList.toggle('scroll-locked', on);
+    openBtn.addEventListener('click', () => {
+      panel.showModal();
+      openBtn.setAttribute('aria-expanded', 'true');
+      lock(true);
+    });
+    closeBtn.addEventListener('click', () => panel.close());
+    panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); panel.close(); } });
+    panel.addEventListener('close', () => {
+      openBtn.setAttribute('aria-expanded', 'false');
+      lock(false);
+      openBtn.focus();
+    });
+    panel.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => panel.close()));
+  }
+  // Body scroll lock for any modal dialog (search, projects)
+  document.addEventListener('toggle', () => {}, true);
+
+  // Language toggle: visual only
+  const langBtns = document.querySelectorAll<HTMLButtonElement>('.lang button');
+  langBtns.forEach((b) =>
+    b.addEventListener('click', () => {
+      langBtns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    }),
+  );
+</script>

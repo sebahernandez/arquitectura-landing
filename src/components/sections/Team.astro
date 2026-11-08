@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import { team } from '../../data/team';
+import SectionLabel from '../ui/SectionLabel.astro';
+---
+<section id="team" class="block block--sand" aria-labelledby="team-title">
+  <div class="block-inner">
+    <div class="block__head">
+      <SectionLabel rule="after">El equipo</SectionLabel>
+      <h2 id="team-title" class="h-section">Un estudio pequeño, con atención de primer nivel.</h2>
+      <p class="demo-note">Equipo ficticio. Los retratos son fotografías de archivo usadas solo con fines ilustrativos.</p>
+    </div>
+    <ul class="team-grid" style="list-style:none;padding:0;margin:0">
+      {team.map((m, i) => (
+        <li class="team-card" data-reveal data-reveal-delay={i * 0.08}>
+          <div class="team-card__img">
+            <Image src={m.photo} alt={m.alt} widths={[320, 520, 800]} sizes="(max-width: 767px) 110px, 30vw" loading="lazy" quality={70} style={`object-position:${m.position}`} />
+          </div>
+          <div>
+            <p class="team-card__name">{m.name}</p>
+            <p class="team-card__role">{m.role}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

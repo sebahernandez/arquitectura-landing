@@ -1,0 +1,25 @@
+---
+// Procedural topographic contour lines (decorative, deterministic).
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+
+const W = 640, H = 420;
+function ring(cx: number, cy: number, r: number, seed: number): string {
+  const pts: string[] = [];
+  const steps = 90;
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * Math.PI * 2;
+    const wob = 1 + 0.12 * Math.sin(a * 2 + seed) + 0.07 * Math.sin(a * 3 - seed * 1.7) + 0.04 * Math.sin(a * 5 + seed * 0.6);
+    const x = cx + Math.cos(a) * r * wob * 1.35;
+    const y = cy + Math.sin(a) * r * wob * 0.8;
+    pts.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`);
+  }
+  return pts.join('') + 'Z';
+}
+const paths: string[] = [];
+for (let i = 1; i <= 15; i++) paths.push(ring(130, 330, i * 22, 0.4 + i * 0.09));
+for (let i = 1; i <= 9; i++) paths.push(ring(520, 410, i * 24, 2 + i * 0.12));
+---
+<svg class={cls} viewBox={`0 0 ${W} ${H}`} fill="none" stroke="currentColor" stroke-width=".8" preserveAspectRatio="xMinYMax slice" aria-hidden="true" focusable="false">
+  {paths.map((d) => <path d={d} />)}
+</svg>

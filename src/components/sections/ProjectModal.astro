@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import { ChevronLeft, ChevronRight, X } from '@lucide/astro';
+import type { Project } from '../../data/projects';
+interface Props { project: Project }
+const { project: p } = Astro.props;
+---
+<dialog class="modal" id={`modal-${p.id}`} aria-labelledby={`modal-title-${p.id}`}>
+  <button type="button" class="modal__close" data-close aria-label="Cerrar detalles del proyecto"><X size={20} stroke-width={1.4} /></button>
+  <div class="modal__grid">
+    <div class="modal__gallery">
+      {p.gallery.map((g, i) => (
+        <figure class:list={['modal__slide', i === 0 && 'is-active']} style="margin:0">
+          <Image src={g.src} alt={g.alt} widths={[640, 960, 1280]} sizes="(max-width: 1023px) 94vw, 600px" loading="lazy" quality={72} />
+        </figure>
+      ))}
+      <span class="modal__count" aria-live="polite">1 / {p.gallery.length}</span>
+      <div class="modal__nav">
+        <button type="button" data-prev aria-label="Imagen anterior"><ChevronLeft size={20} stroke-width={1.4} /></button>
+        <button type="button" data-next aria-label="Imagen siguiente"><ChevronRight size={20} stroke-width={1.4} /></button>
+      </div>
+    </div>
+    <div class="modal__body">
+      <p class="label">{p.category} · {p.location}</p>
+      <h3 class="h-section" id={`modal-title-${p.id}`}>{p.title}</h3>
+      <p class="text-body">{p.description}</p>
+      <dl class="modal__meta">
+        <div><dt>Año</dt><dd>{p.year}</dd></div>
+        <div><dt>Superficie</dt><dd>{p.area}</dd></div>
+      </dl>
+      <div>
+        <p class="label" style="margin-bottom:8px">Alcance</p>
+        <ul class="modal__scope">{p.scope.map((s) => <li>{s}</li>)}</ul>
+      </div>
+      <p class="demo-note">Proyecto ilustrativo de demostración. Las imágenes son fotografías de archivo.</p>
+    </div>
+  </div>
+</dialog>

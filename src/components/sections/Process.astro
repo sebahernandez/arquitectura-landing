@@ -1,0 +1,21 @@
+---
+import { process } from '../../data/process';
+import SectionLabel from '../ui/SectionLabel.astro';
+---
+<section id="process" class="block" aria-labelledby="process-title">
+  <div class="block-inner">
+    <div class="block__head">
+      <SectionLabel rule="after">Cómo trabajamos</SectionLabel>
+      <h2 id="process-title" class="h-section">Un proceso cuidado, del primer boceto al último detalle.</h2>
+    </div>
+    <ol class="process-grid" style="list-style:none;padding:0;margin:0">
+      {process.map((s, i) => (
+        <li class="process-step" data-reveal data-reveal-delay={i * 0.07}>
+          <p class="process-step__n">{s.n}</p>
+          <h3 class="process-step__t">{s.title}</h3>
+          <p class="process-step__p">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

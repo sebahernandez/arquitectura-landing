@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+import studio from '../../assets/images/studio.jpg';
+import SectionLabel from '../ui/SectionLabel.astro';
+import Button from '../ui/Button.astro';
+import FloorPlan from '../ui/FloorPlan.astro';
+---
+<section id="studio" class="studio hair-t hair-b" aria-labelledby="studio-title">
+  <FloorPlan class="studio__plan" />
+  <div class="studio__inner">
+    <div class="studio__media" data-reveal>
+      <Image src={studio} alt="Comedor luminoso con una larga mesa oscura, grandes ventanales y vista al bosque" widths={[600, 900, 1200]} sizes="(max-width: 1023px) 94vw, 40vw" loading="lazy" quality={72} />
+    </div>
+    <div class="studio__text" data-reveal data-reveal-delay="0.1">
+      <SectionLabel rule="after">Nuestro estudio</SectionLabel>
+      <h2 id="studio-title" class="h-section studio__title">Diseñamos con claridad.<br />Construimos con esmero.</h2>
+      <p class="text-body studio__copy">
+        Cada proyecto comienza por escuchar: entender cómo las personas viven, trabajan y se relacionan con su entorno. Nuestro proceso es colaborativo, reflexivo y guiado por el oficio, el contexto y un diseño duradero.
+      </p>
+      <div class="studio__cta">
+        <Button href="#process" variant="outline">Conozca más sobre nuestro estudio</Button>
+      </div>
+    </div>
+  </div>
+</section>

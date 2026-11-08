@@ -1,0 +1,78 @@
+---
+import { Search, X } from '@lucide/astro';
+import { projects } from '../../data/projects';
+import { services } from '../../data/services';
+import { faq } from '../../data/faq';
+import { navItems } from '../../data/nav';
+
+interface Entry { label: string; type: string; href: string }
+const entries: Entry[] = [
+  ...navItems.map((n) => ({ label: n.label, type: 'Sección', href: n.href })),
+  ...projects.map((p) => ({ label: `${p.title} (${p.location})`, type: 'Proyecto', href: '#projects' })),
+  ...services.map((s) => ({ label: s.title, type: 'Servicio', href: '#services' })),
+  { label: 'Cómo trabajamos', type: 'Sección', href: '#process' },
+  { label: 'Equipo', type: 'Sección', href: '#team' },
+  ...faq.slice(0, 5).map((f) => ({ label: f.q, type: 'Preguntas', href: '#faq' })),
+];
+---
+<dialog class="search" id="search-dialog" aria-label="Buscar en el sitio">
+  <form method="dialog" class="search__bar" role="search" id="search-form">
+    <Search size={20} stroke-width={1.4} aria-hidden="true" />
+    <label for="search-input" class="sr-only">Buscar secciones, proyectos y servicios</label>
+    <input id="search-input" type="search" placeholder="Buscar proyectos, servicios, secciones..." autocomplete="off" />
+    <button type="button" class="icon-btn" data-close aria-label="Cerrar búsqueda"><X size={20} stroke-width={1.4} /></button>
+  </form>
+  <p class="sr-only" aria-live="polite" id="search-status"></p>
+  <ul class="search__list" id="search-list">
+    {entries.map((e) => (
+      <li data-text={`${e.label} ${e.type}`.toLowerCase()}>
+        <a href={e.href}><span>{e.label}</span><small>{e.type}</small></a>
+      </li>
+    ))}
+  </ul>
+  <p class="search__empty" id="search-empty" hidden>Sin resultados. Esta es una búsqueda de demostración solo sobre el contenido de la página.</p>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const list = document.getElementById('search-list');
+  const empty = document.getElementById('search-empty');
+  const status = document.getElementById('search-status');
+  if (dlg && input && list && empty && status) {
+    const items = Array.from(list.querySelectorAll<HTMLLIElement>('li'));
+    const filter = () => {
+      const q = input.value.trim().toLowerCase();
+      let n = 0;
+      items.forEach((li) => {
+        const show = !q || (li.dataset.text ?? '').includes(q);
+        li.hidden = !show;
+        if (show) n++;
+      });
+      empty.hidden = n > 0;
+      status.textContent = `${n} resultado${n === 1 ? '' : 's'}`;
+    };
+    input.addEventListener('input', filter);
+    document.querySelectorAll<HTMLElement>('[data-open-search]').forEach((b) =>
+      b.addEventListener('click', () => {
+        dlg.showModal();
+        input.value = '';
+        filter();
+        input.focus();
+      }),
+    );
+    dlg.querySelector('[data-close]')?.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); dlg.close(); } });
+    list.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) dlg.close();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const first = items.find((li) => !li.hidden)?.querySelector('a');
+        if (first) { dlg.close(); location.hash = first.getAttribute('href') ?? ''; }
+      }
+    });
+  }
+</script>

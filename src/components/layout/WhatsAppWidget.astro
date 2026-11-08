@@ -1,0 +1,51 @@
+---
+import { MessageCircle, X } from '@lucide/astro';
+---
+<button type="button" class="wa-btn" id="wa-toggle" aria-label="Abrir chat (demostración)" aria-expanded="false" aria-controls="wa-panel">
+  <MessageCircle size={24} stroke-width={1.4} />
+</button>
+<div class="wa-panel" id="wa-panel" role="dialog" aria-label="Chat de demostración">
+  <div class="wa-panel__head">
+    <strong>Northline Atelier</strong>
+    <button type="button" id="wa-close" aria-label="Cerrar chat" class="icon-btn" style="width:32px;height:32px"><X size={18} stroke-width={1.4} /></button>
+  </div>
+  <p class="wa-panel__demo">Demo: no hay ningún número real conectado. Las respuestas son simuladas.</p>
+  <div class="wa-panel__log" id="wa-log" aria-live="polite">
+    <p class="wa-msg">Hola, bienvenido a Northline Atelier. ¿En qué podemos ayudarle hoy?</p>
+  </div>
+  <div class="wa-panel__quick" id="wa-quick">
+    <button type="button" data-q="Me gustaría conversar sobre un nuevo proyecto" data-a="Excelente. En la versión real, un integrante del equipo le consultaría por el terreno, el alcance y los plazos.">Nuevo proyecto</button>
+    <button type="button" data-q="¿Qué servicios ofrecen?" data-a="Ofrecemos arquitectura, diseño interior, planificación y mobiliario a medida.">Servicios</button>
+    <button type="button" data-q="¿Puedo agendar una llamada?" data-a="Esto es una demostración, por lo que no se agendó nada. En producción se abriría un enlace de agenda.">Agendar llamada</button>
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById('wa-toggle') as HTMLButtonElement | null;
+  const panel = document.getElementById('wa-panel');
+  const log = document.getElementById('wa-log');
+  const quick = document.getElementById('wa-quick');
+  if (toggle && panel && log && quick) {
+    const setOpen = (open: boolean) => {
+      panel.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      if (open) (quick.querySelector('button') as HTMLElement | null)?.focus(); else toggle.focus();
+    };
+    toggle.addEventListener('click', () => setOpen(!panel.classList.contains('is-open')));
+    document.getElementById('wa-close')?.addEventListener('click', () => setOpen(false));
+    panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    const add = (text: string, me = false) => {
+      const p = document.createElement('p');
+      p.className = 'wa-msg' + (me ? ' wa-msg--me' : '');
+      p.textContent = text;
+      log.appendChild(p);
+      log.scrollTop = log.scrollHeight;
+    };
+    quick.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+      b.addEventListener('click', () => {
+        add(b.dataset.q ?? '', true);
+        setTimeout(() => add(b.dataset.a ?? ''), 500);
+      }),
+    );
+  }
+</script>

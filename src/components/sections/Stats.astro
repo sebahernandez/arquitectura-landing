@@ -1,0 +1,42 @@
+---
+import { stats } from '../../data/stats';
+---
+<section class="stats hair-b" aria-label="El estudio en cifras">
+  <div class="stats__row">
+    <span class="stats__line" aria-hidden="true"></span>
+    {stats.map((s) => (
+      <>
+        <div class="stat">
+          <p class="stat__num"><span data-count={s.value}>{s.value}</span>{s.suffix && <sup>{s.suffix}</sup>}</p>
+          <p class="stat__label">{s.label}</p>
+        </div>
+        <span class="stats__line" aria-hidden="true"></span>
+      </>
+    ))}
+  </div>
+</section>
+
+<script>
+  const els = document.querySelectorAll<HTMLElement>('[data-count]');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.count);
+      const start = performance.now();
+      const dur = 1600;
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - start) / dur);
+        el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      el.textContent = '0';
+      requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { run(e.target as HTMLElement); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.6 });
+    els.forEach((el) => io.observe(el));
+  }
+</script>

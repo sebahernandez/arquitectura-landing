@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import type { Project } from '../../data/projects';
+import ThinArrow from './ThinArrow.astro';
+interface Props { project: Project; delay?: number; reveal?: boolean }
+const { project: p, delay = 0, reveal = false } = Astro.props;
+const revealAttrs = reveal ? { 'data-reveal': '', 'data-reveal-delay': delay } : {};
+---
+<article class="project-card" {...revealAttrs}>
+  <button type="button" class="project-card__btn" data-project={p.id} aria-haspopup="dialog" aria-label={`${p.title}, ${p.category}, ${p.location}. Abrir detalles del proyecto`}>
+    <div class="project-card__media">
+      <Image src={p.cover.src} alt={p.cover.alt} widths={[480, 720, 960]} sizes="(max-width: 767px) 94vw, (max-width: 1023px) 46vw, 31vw" loading="lazy" quality={70} />
+    </div>
+    <div class="project-card__body">
+      <span class="project-card__title">{p.title}</span>
+      <span class="project-card__cat">{p.category}</span>
+      <span class="project-card__loc">{p.location}</span>
+      <ThinArrow class="project-card__arrow" />
+    </div>
+  </button>
+</article>

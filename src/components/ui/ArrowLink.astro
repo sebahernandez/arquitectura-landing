@@ -1,0 +1,9 @@
+---
+import ThinArrow from './ThinArrow.astro';
+interface Props { href?: string; tone?: 'ink' | 'olive'; class?: string; [key: string]: unknown }
+const { href, tone = 'ink', class: cls, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag class:list={['arrow-link', tone === 'olive' && 'arrow-link--olive', cls]} {...(href ? { href } : { type: 'button' })} {...rest}>
+  <span><slot /></span><ThinArrow />
+</Tag>

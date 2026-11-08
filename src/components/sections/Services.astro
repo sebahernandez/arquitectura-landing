@@ -1,0 +1,41 @@
+---
+import { services } from '../../data/services';
+import SectionLabel from '../ui/SectionLabel.astro';
+import ServiceIcon from '../ui/ServiceIcon.astro';
+import ThinArrow from '../ui/ThinArrow.astro';
+---
+<section id="services" class="services" aria-labelledby="services-label">
+  <div class="services__inner">
+    <SectionLabel id="services-label" as="h2" rule="after">Nuestros servicios</SectionLabel>
+    <div class="services__grid">
+      {services.map((s, i) => (
+        <article class="service" data-reveal data-reveal-delay={i * 0.07}>
+          <ServiceIcon name={s.id} class="service__icon" />
+          <h3 class="service__title">{s.title}</h3>
+          <p class="service__text">{s.text}</p>
+          <button type="button" class="arrow-link arrow-link--olive service__more" aria-expanded="false" aria-controls={`scope-${s.id}`}>
+            <span>Conocer más</span><ThinArrow />
+          </button>
+          <div class="service__panel" id={`scope-${s.id}`} data-open="false" inert>
+            <div>
+              <ul class="service__scope">{s.scope.map((x) => <li>{x}</li>)}</ul>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.service__more').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.getAttribute('aria-controls') ?? '');
+      if (!panel) return;
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      panel.dataset.open = String(open);
+      panel.inert = !open;
+    });
+  });
+</script>
