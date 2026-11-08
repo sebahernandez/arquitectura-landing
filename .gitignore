@@ -18,6 +18,9 @@ playwright-report/
 # logs
 npm-debug.log*
 
+# tooling
+.atl/
+
 # OS / editor
 .DS_Store
 .vscode/
