@@ -1,7 +1,7 @@
 export const contact = {
-  address: ['28 King Street, Estudio 502', 'Copenhague, Dinamarca 1264'],
-  email: 'hello@northlineatelier.example',
-  phone: '+45 00 00 00 00',
+  address: ['Av. Alonso de Córdova 5000, Oficina 502', 'Vitacura, Santiago, Chile'],
+  email: 'contacto@northlineatelier.cl',
+  phone: '+56 2 0000 0000',
   projectTypes: ['Arquitectura', 'Diseño interior', 'Planificación', 'Mobiliario a medida', 'Otro'],
   socials: [
     { label: 'Instagram', href: '#' },
